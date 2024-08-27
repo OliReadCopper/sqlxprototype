@@ -15,3 +15,7 @@ var (
 		slog.NewJSONHandler(os.Stdout, nil),
 	)
 )
+
+func init() {
+	slog.SetDefault(JSONLogger)
+}
