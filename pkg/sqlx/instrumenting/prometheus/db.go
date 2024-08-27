@@ -102,7 +102,9 @@ func NewDB(opts ...DBOption) kryptonsqlx.DB {
 // Begin prometheus instrumentation implementation of sqlx.Begin
 func (db *DB) Begin() (*sql.Tx, error) {
 	begin := time.Now()
-	defer beginDuration.Observe(time.Since(begin).Seconds())
+	defer func() {
+		beginDuration.Observe(time.Since(begin).Seconds())
+	}()
 
 	beginCount.Inc()
 
@@ -117,7 +119,9 @@ func (db *DB) Begin() (*sql.Tx, error) {
 // BeginTx prometheus instrumentation implementation of sqlx.BeginTx
 func (db *DB) BeginTx(ctx context.Context, opts *sql.TxOptions) (*sql.Tx, error) {
 	begin := time.Now()
-	defer beginDuration.Observe(time.Since(begin).Seconds())
+	defer func() {
+		beginDuration.Observe(time.Since(begin).Seconds())
+	}()
 
 	beginCount.Inc()
 
@@ -132,7 +136,9 @@ func (db *DB) BeginTx(ctx context.Context, opts *sql.TxOptions) (*sql.Tx, error)
 // BeginTxx prometheus instrumentation implementation of sqlx.BeginTxx
 func (db *DB) BeginTxx(ctx context.Context, opts *sql.TxOptions) (*sqlx.Tx, error) {
 	begin := time.Now()
-	defer beginDuration.Observe(time.Since(begin).Seconds())
+	defer func() {
+		beginDuration.Observe(time.Since(begin).Seconds())
+	}()
 
 	beginCount.Inc()
 
@@ -146,6 +152,11 @@ func (db *DB) BeginTxx(ctx context.Context, opts *sql.TxOptions) (*sqlx.Tx, erro
 
 // Beginx prometheus instrumentation implementation of sqlx.Beginx
 func (db *DB) Beginx() (*sqlx.Tx, error) {
+	begin := time.Now()
+	defer func() {
+		beginDuration.Observe(time.Since(begin).Seconds())
+	}()
+
 	beginCount.Inc()
 
 	sql, err := db.inner.Beginx()
@@ -197,9 +208,12 @@ func (db *DB) DriverName() string {
 // Exec prometheus instrumentation implementation of sqlx.Exec
 func (db *DB) Exec(query string, args ...any) (sql.Result, error) {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -219,9 +233,12 @@ func (db *DB) Exec(query string, args ...any) (sql.Result, error) {
 // ExecContext prometheus instrumentation implementation of sqlx.ExecContext
 func (db *DB) ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error) {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -241,9 +258,12 @@ func (db *DB) ExecContext(ctx context.Context, query string, args ...any) (sql.R
 // Get prometheus instrumentation implementation of sqlx.Get
 func (db *DB) Get(dest interface{}, query string, args ...interface{}) error {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -263,9 +283,12 @@ func (db *DB) Get(dest interface{}, query string, args ...interface{}) error {
 // GetContext prometheus instrumentation implementation of sqlx.GetContext
 func (db *DB) GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -292,7 +315,10 @@ func (db *DB) MapperFunc(mf func(string) string) {
 // MustBegin prometheus instrumentation implementation of sqlx.MustBegin
 func (db *DB) MustBegin() *sqlx.Tx {
 	begin := time.Now()
-	defer beginDuration.Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		beginDuration.Observe(time.Since(begin).Seconds())
+	}()
 
 	beginCount.Inc()
 
@@ -302,7 +328,10 @@ func (db *DB) MustBegin() *sqlx.Tx {
 // MustBeginTx prometheus instrumentation implementation of sqlx.MustBeginTx
 func (db *DB) MustBeginTx(ctx context.Context, opts *sql.TxOptions) *sqlx.Tx {
 	begin := time.Now()
-	defer beginDuration.Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		beginDuration.Observe(time.Since(begin).Seconds())
+	}()
 
 	beginCount.Inc()
 
@@ -312,9 +341,12 @@ func (db *DB) MustBeginTx(ctx context.Context, opts *sql.TxOptions) *sqlx.Tx {
 // MustExec prometheus instrumentation implementation of sqlx.MustExec
 func (db *DB) MustExec(query string, args ...interface{}) sql.Result {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -326,9 +358,12 @@ func (db *DB) MustExec(query string, args ...interface{}) sql.Result {
 // MustExecContext prometheus instrumentation implementation of sqlx.MustExecContext
 func (db *DB) MustExecContext(ctx context.Context, query string, args ...interface{}) sql.Result {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -340,9 +375,12 @@ func (db *DB) MustExecContext(ctx context.Context, query string, args ...interfa
 // NamedExec prometheus instrumentation implementation of sqlx.NamedExec
 func (db *DB) NamedExec(query string, arg interface{}) (sql.Result, error) {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -361,9 +399,12 @@ func (db *DB) NamedExec(query string, arg interface{}) (sql.Result, error) {
 // NamedExecContext prometheus instrumentation implementation of sqlx.NamedExecContext
 func (db *DB) NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error) {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -382,9 +423,12 @@ func (db *DB) NamedExecContext(ctx context.Context, query string, arg interface{
 // NamedQuery prometheus instrumentation implementation of sqlx.NamedQuery
 func (db *DB) NamedQuery(query string, arg interface{}) (*sqlx.Rows, error) {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -403,9 +447,12 @@ func (db *DB) NamedQuery(query string, arg interface{}) (*sqlx.Rows, error) {
 // NamedQueryContext prometheus instrumentation implementation of sqlx.NamedQueryContext
 func (db *DB) NamedQueryContext(ctx context.Context, query string, arg interface{}) (*sqlx.Rows, error) {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -472,9 +519,12 @@ func (db *DB) PreparexContext(ctx context.Context, query string) (*sqlx.Stmt, er
 // Query prometheus instrumentation implementation of sqlx.Query
 func (db *DB) Query(query string, args ...any) (*sql.Rows, error) {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -493,9 +543,12 @@ func (db *DB) Query(query string, args ...any) (*sql.Rows, error) {
 // QueryContext prometheus instrumentation implementation of sqlx.QueryContext
 func (db *DB) QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -514,9 +567,12 @@ func (db *DB) QueryContext(ctx context.Context, query string, args ...any) (*sql
 // QueryRow prometheus instrumentation implementation of sqlx.QueryRow
 func (db *DB) QueryRow(query string, args ...any) *sql.Row {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -528,9 +584,12 @@ func (db *DB) QueryRow(query string, args ...any) *sql.Row {
 // QueryRowContext prometheus instrumentation implementation of sqlx.QueryRowContext
 func (db *DB) QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -542,9 +601,12 @@ func (db *DB) QueryRowContext(ctx context.Context, query string, args ...any) *s
 // QueryRowx prometheus instrumentation implementation of sqlx.QueryRowx
 func (db *DB) QueryRowx(query string, args ...interface{}) *sqlx.Row {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -556,9 +618,12 @@ func (db *DB) QueryRowx(query string, args ...interface{}) *sqlx.Row {
 // QueryRowxContext prometheus instrumentation implementation of sqlx.QueryRowxContext
 func (db *DB) QueryRowxContext(ctx context.Context, query string, args ...interface{}) *sqlx.Row {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -570,9 +635,12 @@ func (db *DB) QueryRowxContext(ctx context.Context, query string, args ...interf
 // Queryx prometheus instrumentation implementation of sqlx.Queryx
 func (db *DB) Queryx(query string, args ...interface{}) (*sqlx.Rows, error) {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
@@ -591,9 +659,12 @@ func (db *DB) Queryx(query string, args ...interface{}) (*sqlx.Rows, error) {
 // QueryxContext prometheus instrumentation implementation of sqlx.QueryxContext
 func (db *DB) QueryxContext(ctx context.Context, query string, args ...interface{}) (*sqlx.Rows, error) {
 	begin := time.Now()
-	defer execDuration.With(prometheus.Labels{
-		"query": query,
-	}).Observe(time.Since(begin).Seconds())
+
+	defer func() {
+		execDuration.With(prometheus.Labels{
+			"query": query,
+		}).Observe(time.Since(begin).Seconds())
+	}()
 
 	execCount.With(prometheus.Labels{
 		"query": query,
