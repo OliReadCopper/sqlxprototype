@@ -12,6 +12,7 @@ import (
 	"github.com/olireadcopper/sqlxprototype/internal/repository/taxonomy"
 	"github.com/olireadcopper/sqlxprototype/internal/repository/taxonomy/sql"
 	kryptonsqlx "github.com/olireadcopper/sqlxprototype/pkg/sqlx"
+	kryptonsqlxprometheus "github.com/olireadcopper/sqlxprototype/pkg/sqlx/instrumenting/prometheus"
 	krtpronsqlxlogging "github.com/olireadcopper/sqlxprototype/pkg/sqlx/logging"
 )
 
@@ -30,14 +31,16 @@ func main() {
 
 	repositoryDB = pool
 
-	if *instrumenting {
-		// TODO wrap repositoryDB with instrumenting code
-	}
-
 	if *logging {
 		repositoryDB = krtpronsqlxlogging.NewDB(
 			krtpronsqlxlogging.DBWithLogger(slog.Default()),
 			krtpronsqlxlogging.DBWithInnerDB(repositoryDB),
+		)
+	}
+
+	if *instrumenting {
+		repositoryDB = kryptonsqlxprometheus.NewDB(
+			kryptonsqlxprometheus.DBWithInnerDB(repositoryDB),
 		)
 	}
 

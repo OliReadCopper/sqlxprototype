@@ -8,6 +8,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	kryptonsqlx "github.com/olireadcopper/sqlxprototype/pkg/sqlx"
+	"github.com/olireadcopper/sqlxprototype/pkg/sqlx/nop"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -84,6 +85,18 @@ func init() {
 		},
 		[]string{"query"},
 	)
+}
+
+func NewDB(opts ...DBOption) kryptonsqlx.DB {
+	db := &DB{
+		inner: nop.NewDB(),
+	}
+
+	for _, opt := range opts {
+		opt(db)
+	}
+
+	return db
 }
 
 // Begin prometheus instrumentation implementation of sqlx.Begin
